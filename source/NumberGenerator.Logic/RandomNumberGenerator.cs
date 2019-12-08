@@ -24,6 +24,10 @@ namespace NumberGenerator.Logic
 
         #region Fields
 
+        List<IObserver> _observer = new List<IObserver>();
+        private IObserver lastDetachedObserver;
+        private int _delay;
+        private int _seed;
 
         #endregion
 
@@ -42,6 +46,7 @@ namespace NumberGenerator.Logic
         /// <param name="delay">Enthält die Zeit zw. zwei Generierungen in Millisekunden.</param>
         public RandomNumberGenerator(int delay) : this(delay, DEFAULT_SEED)
         {
+            _delay = delay;
         }
 
         /// <summary>
@@ -51,6 +56,8 @@ namespace NumberGenerator.Logic
         /// <param name="seed">Enthält die Initialisierung der Zufallszahlengenerierung.</param>
         public RandomNumberGenerator(int delay, int seed)
         {
+            _delay = delay;
+            _seed = seed;   
         }
 
         #endregion
@@ -65,7 +72,16 @@ namespace NumberGenerator.Logic
         /// <param name="observer">Der Beobachter, welcher benachricht werden möchte.</param>
         public void Attach(IObserver observer)
         {
-            throw new NotImplementedException();
+            if(observer == null)
+            {
+                throw new ArgumentNullException(nameof(observer));
+            }
+            else if(_observer.Contains(observer))
+            {
+                throw new InvalidOperationException();
+            }
+
+            _observer.Add(observer);
         }
 
         /// <summary>
@@ -74,7 +90,16 @@ namespace NumberGenerator.Logic
         /// <param name="observer">Der Beobachter, welcher nicht mehr benachrichtigt werden möchte</param>
         public void Detach(IObserver observer)
         {
-            throw new NotImplementedException();
+            if (observer == null)
+            {
+                throw new ArgumentNullException(nameof(observer));
+            }
+            else if (!_observer.Contains(observer)) 
+            {
+                throw new InvalidOperationException();
+            }
+
+            _observer.Remove(observer);
         }
 
         /// <summary>
@@ -99,7 +124,18 @@ namespace NumberGenerator.Logic
         /// </summary>
         public void StartNumberGeneration()
         {
-            throw new NotImplementedException();
+            Random rnd = new Random();
+
+            while(_observer.Count > 0)
+            {
+                int i = rnd.Next(RANDOM_MIN_VALUE, RANDOM_MAX_VALUE);
+                
+                foreach(IObserver observer in _observer)
+                {
+                    observer.OnNextNumber(i);
+                }
+                Task.Delay(_delay).Wait();
+            }
         }
 
         #endregion

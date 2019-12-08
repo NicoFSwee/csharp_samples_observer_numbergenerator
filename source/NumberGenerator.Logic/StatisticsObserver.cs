@@ -8,9 +8,8 @@ namespace NumberGenerator.Logic
     public class StatisticsObserver : BaseObserver
     {
         #region Fields
-
         #endregion
-
+        int _countOfNumbers = 0;
         #region Properties
 
         /// <summary>
@@ -31,7 +30,7 @@ namespace NumberGenerator.Logic
         /// <summary>
         /// Enthält den Durchschnitt der generierten Zahlen.
         /// </summary>
-        public int Avg => throw new NotImplementedException();
+        public int Avg => Sum / _countOfNumbers;
 
         #endregion
 
@@ -39,7 +38,7 @@ namespace NumberGenerator.Logic
 
         public StatisticsObserver(IObservable numberGenerator, int countOfNumbersToWaitFor) : base(numberGenerator, countOfNumbersToWaitFor)
         {
-            throw new NotImplementedException();
+            
         }
 
         #endregion
@@ -48,12 +47,24 @@ namespace NumberGenerator.Logic
 
         public override string ToString()
         {
-            throw new NotImplementedException();
+            return base.ToString() + $"=> StatisticsObserver [Min='{Min}', Max='{Max}', Sum='{Sum}', Avg='{Avg}']";
         }
 
         public override void OnNextNumber(int number)
         {
-            throw new NotImplementedException();
+            base.OnNextNumber(number);
+
+            _countOfNumbers++;
+            if(number < Min)
+            {
+                Min = number;
+            }
+            else if(number > Max)
+            {
+                Max = number;
+            }
+
+            Sum += number;
         }
 
         #endregion
