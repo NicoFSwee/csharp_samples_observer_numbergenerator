@@ -25,19 +25,18 @@ namespace NumberGenerator.Logic
         #region Fields
 
         List<IObserver> _observer = new List<IObserver>();
-        private IObserver lastDetachedObserver;
         private int _delay;
-        private int _seed;
-
+        Random _rnd;
         #endregion
 
         #region Constructors
-        
+
         /// <summary>
         /// Initialisiert eine neue Instanz eines NumberGenerator-Objekts
         /// </summary>
         public RandomNumberGenerator() : this(DEFAULT_DELAY, DEFAULT_SEED)
         {
+            _rnd = new Random(DEFAULT_SEED);
         }
 
         /// <summary>
@@ -47,6 +46,7 @@ namespace NumberGenerator.Logic
         public RandomNumberGenerator(int delay) : this(delay, DEFAULT_SEED)
         {
             _delay = delay;
+            _rnd = new Random(DEFAULT_SEED);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace NumberGenerator.Logic
         public RandomNumberGenerator(int delay, int seed)
         {
             _delay = delay;
-            _seed = seed;   
+            _rnd = new Random(seed);
         }
 
         #endregion
@@ -108,15 +108,13 @@ namespace NumberGenerator.Logic
         /// <param name="number">Die generierte Zahl.</param>
         public void NotifyObservers(int number)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < _observer.Count; i++)
+            {
+                _observer[i].OnNextNumber(number);
+            }
         }
 
         #endregion
-
-        public override string ToString()
-        {
-            throw new NotImplementedException();
-        }
 
         /// <summary>
         /// Started the Nummer-Generierung.
@@ -124,16 +122,11 @@ namespace NumberGenerator.Logic
         /// </summary>
         public void StartNumberGeneration()
         {
-            Random rnd = new Random();
-
             while(_observer.Count > 0)
             {
-                int i = rnd.Next(RANDOM_MIN_VALUE, RANDOM_MAX_VALUE);
-                
-                foreach(IObserver observer in _observer)
-                {
-                    observer.OnNextNumber(i);
-                }
+                int i = _rnd.Next(RANDOM_MIN_VALUE, RANDOM_MAX_VALUE);
+                Console.WriteLine($">> NumberGenerator: Number generated: '{i}'");
+                NotifyObservers(i);
                 Task.Delay(_delay).Wait();
             }
         }

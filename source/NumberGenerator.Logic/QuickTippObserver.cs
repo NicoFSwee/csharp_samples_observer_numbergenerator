@@ -12,6 +12,7 @@ namespace NumberGenerator.Logic
         #region Fields
 
         private IObservable _numberGenerator;
+        private const int _FULLTIPP = 6;
 
         #endregion
 
@@ -26,7 +27,9 @@ namespace NumberGenerator.Logic
 
         public QuickTippObserver(IObservable numberGenerator)
         {
-            throw new NotImplementedException();
+            QuickTippNumbers = new List<int>();
+            _numberGenerator = numberGenerator;
+            numberGenerator.Attach(this);
         }
 
         #endregion
@@ -35,17 +38,37 @@ namespace NumberGenerator.Logic
 
         public void OnNextNumber(int number)
         {
-            throw new NotImplementedException();
+            CountOfNumbersReceived++;
+
+            if (!QuickTippNumbers.Contains(number) && QuickTippNumbers.Count < _FULLTIPP && number < 46)
+            {
+                QuickTippNumbers.Add(number);
+            }
+
+            if(QuickTippNumbers.Count == _FULLTIPP)
+            {
+                DetachFromNumberGenerator();
+            }
         }
 
         public override string ToString()
         {
-            throw new NotImplementedException();
+            return base.ToString() + $" QuickTippObserver => CountOfNumbersRecieve: {CountOfNumbersReceived}";
         }
 
         private void DetachFromNumberGenerator()
         {
-            throw new NotImplementedException();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"   >> {this.GetType().Name}: Got a full Qick-Tipp => I am not interested in numbers anymore!");
+            Console.ResetColor();
+            _numberGenerator.Detach(this);
+        }
+
+        public string ConvertTippToString()
+        {
+            QuickTippNumbers.Sort();
+
+            return $"{QuickTippNumbers[0]}, {QuickTippNumbers[1]}, {QuickTippNumbers[2]}, {QuickTippNumbers[3]}, {QuickTippNumbers[4]}, {QuickTippNumbers[5]}";
         }
 
         #endregion

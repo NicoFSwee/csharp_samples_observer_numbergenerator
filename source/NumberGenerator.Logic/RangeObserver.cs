@@ -37,7 +37,18 @@ namespace NumberGenerator.Logic
 
         public RangeObserver(IObservable numberGenerator, int numberOfHitsToWaitFor, int lowerRange, int upperRange) : base(numberGenerator, int.MaxValue)
         {
-            throw new NotImplementedException();
+            if(lowerRange > upperRange)
+            {
+                throw new ArgumentException("Lower bound is bigger than upper bound.");
+            }
+            if(numberOfHitsToWaitFor <= 0)
+            {
+                throw new ArgumentException("Negative numbers not allowed");
+            }
+
+            UpperRange = upperRange;
+            LowerRange = lowerRange;
+            NumbersOfHitsToWaitFor = numberOfHitsToWaitFor;
         }
 
         #endregion
@@ -46,12 +57,29 @@ namespace NumberGenerator.Logic
 
         public override string ToString()
         {
-            throw new NotImplementedException();
+            return base.ToString() + $" RangeObserver[LowerRange = '{LowerRange}', UpperRange = '{UpperRange}', NumbersInRange = '{NumbersInRange}', NumberHitsToWaitFor = '{NumbersOfHitsToWaitFor}']";
         }
 
         public override void OnNextNumber(int number)
         {
-            throw new NotImplementedException();
+            base.OnNextNumber(number);
+
+            if (number >= LowerRange && number <= UpperRange)
+            {            
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"   >> {this.GetType().Name}: Number is in range ('{LowerRange}' - '{UpperRange}')!");
+                Console.ResetColor();
+
+                NumbersInRange++;
+            }
+
+            if(NumbersInRange >= NumbersOfHitsToWaitFor)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"   >> {this.GetType().Name}: Got '{NumbersInRange}' numbers in the configured range => I am not interested in new numbers anymore!");
+                Console.ResetColor();
+                base.DetachFromNumberGenerator();
+            }
         }
 
         #endregion
