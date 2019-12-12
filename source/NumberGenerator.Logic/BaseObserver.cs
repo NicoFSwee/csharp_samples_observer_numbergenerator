@@ -48,7 +48,7 @@ namespace NumberGenerator.Logic
         /// Wird aufgerufen wenn der NumberGenerator eine neue Zahl generiert hat.
         /// </summary>
         /// <param name="number"></param>
-        public virtual void OnNextNumber(int number)
+        public virtual void OnNextNumber(object sender, int number)
         {
             CountOfNumbersReceived++;
 

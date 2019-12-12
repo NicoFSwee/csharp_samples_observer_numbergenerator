@@ -60,9 +60,9 @@ namespace NumberGenerator.Logic
             return base.ToString() + $" RangeObserver[LowerRange = '{LowerRange}', UpperRange = '{UpperRange}', NumbersInRange = '{NumbersInRange}', NumberHitsToWaitFor = '{NumbersOfHitsToWaitFor}']";
         }
 
-        public override void OnNextNumber(int number)
+        public override void OnNextNumber(object sender, int number)
         {
-            base.OnNextNumber(number);
+            base.OnNextNumber(sender, number);
 
             if (number >= LowerRange && number <= UpperRange)
             {            

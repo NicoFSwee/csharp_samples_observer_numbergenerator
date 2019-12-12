@@ -28,8 +28,8 @@ namespace NumberGenerator.Logic
         Random _rnd;
         #endregion
 
-        public delegate void NumberChangedHandler(int number);
-        public NumberChangedHandler NumberChanged { get; set; }
+        //public delegate void NumberChangedHandler(int number);
+        public event EventHandler<int> NumberChanged;
 
 
         #region Constructors
@@ -76,7 +76,7 @@ namespace NumberGenerator.Logic
         /// <param name="number">Die generierte Zahl.</param>
         public void NotifyObservers(int number)
         {
-            NumberChanged?.Invoke(number);
+            NumberChanged(this, number);
         }
 
         #endregion
