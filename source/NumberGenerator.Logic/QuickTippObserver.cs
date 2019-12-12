@@ -7,11 +7,11 @@ namespace NumberGenerator.Logic
     /// <summary>
     /// Beobachter, welcher auf einen vollständigen Quick-Tipp wartet: 6 unterschiedliche Zahlen zw. 1 und 45.
     /// </summary>
-    public class QuickTippObserver : IObserver
+    public class QuickTippObserver
     {
         #region Fields
 
-        private IObservable _numberGenerator;
+        private RandomNumberGenerator _numberGenerator;
         private const int _FULLTIPP = 6;
 
         #endregion
@@ -25,11 +25,11 @@ namespace NumberGenerator.Logic
 
         #region Constructor
 
-        public QuickTippObserver(IObservable numberGenerator)
+        public QuickTippObserver(RandomNumberGenerator numberGenerator)
         {
             QuickTippNumbers = new List<int>();
             _numberGenerator = numberGenerator;
-            numberGenerator.Attach(this);
+            numberGenerator.NumberChanged += OnNextNumber;
         }
 
         #endregion
@@ -61,7 +61,7 @@ namespace NumberGenerator.Logic
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"   >> {this.GetType().Name}: Got a full Qick-Tipp => I am not interested in numbers anymore!");
             Console.ResetColor();
-            _numberGenerator.Detach(this);
+            _numberGenerator.NumberChanged -= OnNextNumber;
         }
 
         public string ConvertTippToString()

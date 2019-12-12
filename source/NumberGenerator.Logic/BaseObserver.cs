@@ -7,12 +7,10 @@ namespace NumberGenerator.Logic
     /// Beobachter, welcher die Zahlen auf der Konsole ausgibt.
     /// Diese Klasse dient als Basisklasse für komplexere Beobachter.
     /// </summary>
-    public class BaseObserver : IObserver
+    public class BaseObserver
     {
         #region Fields
-
-        private readonly IObservable _numberGenerator;
-
+        RandomNumberGenerator _rng = new RandomNumberGenerator();
         #endregion
 
         #region Properties
@@ -24,10 +22,10 @@ namespace NumberGenerator.Logic
 
         #region Constructors
 
-        public BaseObserver(IObservable numberGenerator, int countOfNumbersToWaitFor)
+        public BaseObserver(RandomNumberGenerator rng, int countOfNumbersToWaitFor)
         {
-            _numberGenerator = numberGenerator;
-            _numberGenerator.Attach(this);
+            _rng = rng;
+            _rng.NumberChanged += OnNextNumber;
 
             if(countOfNumbersToWaitFor >= 0)
             {
@@ -74,7 +72,7 @@ namespace NumberGenerator.Logic
 
         protected void DetachFromNumberGenerator()
         {
-            _numberGenerator.Detach(this);
+            _rng.NumberChanged -= OnNextNumber;
         }
 
         #endregion

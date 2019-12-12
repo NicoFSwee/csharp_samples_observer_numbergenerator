@@ -36,7 +36,7 @@ namespace NumberGenerator.Logic
 
         #region Constructors
 
-        public StatisticsObserver(IObservable numberGenerator, int countOfNumbersToWaitFor) : base(numberGenerator, countOfNumbersToWaitFor)
+        public StatisticsObserver(RandomNumberGenerator numberGenerator, int countOfNumbersToWaitFor) : base(numberGenerator, countOfNumbersToWaitFor)
         {
 
         }
